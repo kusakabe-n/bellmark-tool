@@ -6,6 +6,8 @@
   <title>ベルマーク集計Webアプリ</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Supedase DB CDN  -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -293,19 +295,36 @@
     }
 
     // localStorageから全エントリ取得
-    function loadEntries() {
-      const json = localStorage.getItem(STORAGE_KEY);
-      if (!json) return [];
-      try {
-        return JSON.parse(json);
-      } catch {
-        return [];
-      }
-    }
+    // function loadEntries() {
+    //   const json = localStorage.getItem(STORAGE_KEY);
+    //   if (!json) return [];
+    //   try {
+    //     return JSON.parse(json);
+    //   } catch {
+    //     return [];
+    //   }
+    // }
     // localStorageへ保存
-    function saveEntries(entries) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    }
+    // function saveEntries(entries) {
+    //   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    // }
+    // Supabaseの初期化
+    const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co'; // SupabaseのURL
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM'; // anonキー
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+// 登録関数（呼び出せばデータ送信）
+async function saveEntry(entry) {
+  const { data, error } = await supabase
+    .from('entries')
+    .insert([entry]);
+
+  if (error) {
+    console.error('送信エラー', error);
+  } else {
+    console.log('保存完了', data);
+  }
+}
 
     // datalist更新（企業名候補）
     // function updateCompanyDatalist() {
