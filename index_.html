@@ -310,21 +310,30 @@
     // }
     // Supabaseの初期化
     const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co'; // SupabaseのURL
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM'; // anonキー
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM'; // anonキー
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-// 登録関数（呼び出せばデータ送信）
-async function saveEntry(entry) {
-  const { data, error } = await supabase
-    .from('entries')
-    .insert([entry]);
+    // 登録関数（呼び出せばデータ送信）
+    async function saveEntry(entry) {
+      const { data, error } = await supabase
+        .from('entries')
+        .insert([entry]);
 
-  if (error) {
-    console.error('送信エラー', error);
-  } else {
-    console.log('保存完了', data);
-  }
-}
+      if (error) {
+        console.error('送信エラー', error);
+      } else {
+        console.log('保存完了', data);
+      }
+    }
+    // 集計や取得(全件)
+    async function getEntries() {
+      const { data, error } = await supabase
+        .from('entries')
+        .select('*');
+
+      if (error) console.error(error);
+      else console.log('取得データ:', data);
+    }
 
     // datalist更新（企業名候補）
     // function updateCompanyDatalist() {
