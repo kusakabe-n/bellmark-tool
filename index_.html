@@ -6,8 +6,6 @@
   <title>ベルマーク集計Webアプリ</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Supedase DB CDN  -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -25,100 +23,86 @@
 
           <!-- 企業名 -->
           <div>
-
-            <!-- <label for="input-sample">
-		１行テキスト入力欄：
-		<input list="sampleDatalist" id="input-sample">
-	</label>
-	<datalist id="sampleDatalist">
-		<option value="1: 'イオンリテール',"></option>
-		<option value="Chrome"></option>
-		<option value="FireFox"></option>
-	</datalist> -->
-           
             <label for="input-company" class="block mb-1">
               協賛企業
               <input list="datalist-companies" id="input-company" class="w-full border rounded px-3 py-2">
             </label>
-
+          
             <!-- datalistの候補 -->
             <datalist id="datalist-companies">
               <option value="--選択してください--"></option>
-               <option value="1: イオンリテール"></option>
-      <option value="3: ラッキーベル"></option>
-     <option value=" 4: ニッスイ"></option>
-     <option value=" 5: 日本ノート"></option>
-     <option value=" 6: DM三井製糖"></option>
-     <option value=" 7: キユーピー"></option>
-     <option value=" 9: エスビー食品"></option>
-     <option value=" 10: クレハ"></option>
-     <option value=" 11: リネットジャパンリサイクル"></option>
-     <option value=" 15: ジブラルタ生命保険"></option>
-     <option value=" 17: 日本テトラパック"></option>
-     <option value=" 18: 日清オイリオグループ"></option>
-     <option value=" 19: キヤノンマーケティングジャパン"></option>
-     <option value=" 21: スリーエム ジャパン"></option>
-     <option value=" 24: 日清製粉ウェルナ"></option>
-     <option value=" 25: 明治"></option>
-     <option value=" 26: 森永製菓"></option>
-     <option value=" 28: ブラザー販売"></option>
-     <option value=" 29: アサヒ飲料"></option>
-     <option value=" 31: 新学社"></option>
-     <option value=" 33: ヤマハミュージックジャパン"></option>
-     <option value=" 35: 日清食品"></option>
-     <option value=" 39: ファインプラス"></option>
-     <option value=" 43: 東芝ライフスタイル"></option>
-     <option value=" 48: ブルボン"></option>
-     <option value=" 52: ナカバヤシ"></option>
-     <option value=" 53: ショウワノート"></option>
-     <option value=" 54: キリンビバレッジ"></option>
-     <option value=" 55: クツワ"></option>
-     <option value=" 56: グリーンスタンプ"></option>
-     <option value=" 64: マルトモ"></option>
-     <option value=" 70: スミフルジャパン"></option>
-     <option value=" 73: エプソン販売"></option>
-     <option value=" 76: ＮＧＰ日本自動車リサイクル事業協同組合"></option>
-     <option value=" 77: 湖池屋"></option>
-     <option value=" 78: グンゼ"></option>
-     <option value=" 83: 味の素"></option>
-     <option value=" 84: セメダイン"></option>
-     <option value=" 88: ニチレイ"></option>
-     <option value=" 89: 白鶴酒造"></option>
-     <option value=" 91: トヤマ楽器製造"></option>
-     <option value=" 92: あいおいニッセイ同和損害保険"></option>
-     <option value=" 93: 石井食品"></option>
-             
+              <option value="1: イオンリテール"></option>
+              <option value="3: ラッキーベル"></option>
+              <option value=" 4: ニッスイ"></option>
+              <option value=" 5: 日本ノート"></option>
+              <option value=" 6: DM三井製糖"></option>
+              <option value=" 7: キユーピー"></option>
+              <option value=" 9: エスビー食品"></option>
+              <option value=" 10: クレハ"></option>
+              <option value=" 11: リネットジャパンリサイクル"></option>
+              <option value=" 15: ジブラルタ生命保険"></option>
+              <option value=" 17: 日本テトラパック"></option>
+              <option value=" 18: 日清オイリオグループ"></option>
+              <option value=" 19: キヤノンマーケティングジャパン"></option>
+              <option value=" 21: スリーエム ジャパン"></option>
+              <option value=" 24: 日清製粉ウェルナ"></option>
+              <option value=" 25: 明治"></option>
+              <option value=" 26: 森永製菓"></option>
+              <option value=" 28: ブラザー販売"></option>
+              <option value=" 29: アサヒ飲料"></option>
+              <option value=" 31: 新学社"></option>
+              <option value=" 33: ヤマハミュージックジャパン"></option>
+              <option value=" 35: 日清食品"></option>
+              <option value=" 39: ファインプラス"></option>
+              <option value=" 43: 東芝ライフスタイル"></option>
+              <option value=" 48: ブルボン"></option>
+              <option value=" 52: ナカバヤシ"></option>
+              <option value=" 53: ショウワノート"></option>
+              <option value=" 54: キリンビバレッジ"></option>
+              <option value=" 55: クツワ"></option>
+              <option value=" 56: グリーンスタンプ"></option>
+              <option value=" 64: マルトモ"></option>
+              <option value=" 70: スミフルジャパン"></option>
+              <option value=" 73: エプソン販売"></option>
+              <option value=" 76: ＮＧＰ日本自動車リサイクル事業協同組合"></option>
+              <option value=" 77: 湖池屋"></option>
+              <option value=" 78: グンゼ"></option>
+              <option value=" 83: 味の素"></option>
+              <option value=" 84: セメダイン"></option>
+              <option value=" 88: ニチレイ"></option>
+              <option value=" 89: 白鶴酒造"></option>
+              <option value=" 91: トヤマ楽器製造"></option>
+              <option value=" 92: あいおいニッセイ同和損害保険"></option>
+              <option value=" 93: 石井食品"></option>
+          
             </datalist>
-
-
+          
+          
           </div>
           <!-- 日付 -->
           <div>
             <label for="input-date" class="block mb-1">日付</label>
-            <input type="date" id="input-date" required
-              class="w-full border rounded px-3 py-2" />
+            <input type="date" id="input-date" required class="w-full border rounded px-3 py-2" />
           </div>
           <!-- 1枚の点数 -->
           <div>
             <label for="input-point" class="block mb-1">1枚の点数</label>
-            <input type="number" id="input-point" required step="0.1" min="0"
-              class="w-full border rounded px-3 py-2" placeholder="例：1 or 0.5" />
+            <input type="number" id="input-point" required step="0.1" min="0" class="w-full border rounded px-3 py-2"
+              placeholder="例：1 or 0.5" />
           </div>
           <!-- 枚数 -->
           <div>
             <label for="input-count" class="block mb-1">枚数</label>
-            <input type="number" id="input-count" required min="1"
-              class="w-full border rounded px-3 py-2" placeholder="例：5" />
+            <input type="number" id="input-count" required min="1" class="w-full border rounded px-3 py-2" placeholder="例：5" />
           </div>
           <!-- ボタン -->
           <div class="text-center">
-            <button type="submit"
-              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               保存
             </button>
           </div>
-        </form>
-      </div>
+          </form>
+          </div>
 
       <!-- 履歴画面 -->
       <div id="screen-history" class="screen hidden">
@@ -308,10 +292,6 @@
     // function saveEntries(entries) {
     //   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     // }
-    // Supabaseの初期化
-    const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co'; // SupabaseのURL
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM'; // anonキー
-    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
     // 登録関数（呼び出せばデータ送信）
     async function saveEntry(entry) {
@@ -560,10 +540,10 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM';
         const supabase = createClient(supabaseUrl, supabaseKey)
 
-        // entriesテーブルから全件取得
+        // entriesTableテーブルから全件取得
         async function loadEntries() {
           const { data, error } = await supabase
-            .from('entries')
+            .from('entriesTable')
             .select('*')
             .order('id', { ascending: true }); // ID順など任意で変更可
 
@@ -575,11 +555,11 @@
           return data;
         }
 
-        // entriesテーブルへ保存（全件置き換えしたい場合）
-        async function saveEntries(entries) {
+        // entriesTableテーブルへ保存（全件置き換えしたい場合）
+        async function saveEntries(entriesTable) {
           // まず全削除（必要ならトランザクション風に後でinsert）
           const { error: deleteError } = await supabase
-            .from('entries')
+            .from('entriesTable')
             .delete()
             .neq('id', 0); // 全削除（id ≠ 0）
 
@@ -590,7 +570,7 @@
 
           // 全データを挿入
           const { error: insertError } = await supabase
-            .from('entries')
+            .from('entriesTable')
             .insert(entries);
 
           if (insertError) {
