@@ -6,6 +6,52 @@
   <title>ベルマーク集計Webアプリ</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module">
+      // Supabaseの読み込み
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+
+        const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM';
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // entriesTableテーブルから全件取得
+        async function loadEntries() {
+          const { data, error } = await supabase
+            .from('entriesTable')
+            .select('*')
+            .order('id', { ascending: true }); // ID順など任意で変更可
+
+          if (error) {
+            console.error('取得エラー:', error);
+            return [];
+          }
+
+          return data;
+        }
+
+        // entriesTableテーブルへ保存（全件置き換えしたい場合）
+        async function saveEntries(entriesTable) {
+          // まず全削除（必要ならトランザクション風に後でinsert）
+          const { error: deleteError } = await supabase
+            .from('entriesTable')
+            .delete()
+            .neq('id', 0); // 全削除（id ≠ 0）
+
+          if (deleteError) {
+            console.error('削除エラー:', deleteError);
+            return;
+          }
+
+          // 全データを挿入
+          const { error: insertError } = await supabase
+            .from('entriesTable')
+            .insert(entries);
+
+          if (insertError) {
+            console.error('追加エラー:', insertError);
+          }
+        }
+  </script>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -529,54 +575,6 @@
     }
     init();
 
-  </script>
-
-
-    <script type="module">
-      // Supabaseの読み込み
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js';
-
-        const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM';
-        const supabase = createClient(supabaseUrl, supabaseKey)
-
-        // entriesTableテーブルから全件取得
-        async function loadEntries() {
-          const { data, error } = await supabase
-            .from('entriesTable')
-            .select('*')
-            .order('id', { ascending: true }); // ID順など任意で変更可
-
-          if (error) {
-            console.error('取得エラー:', error);
-            return [];
-          }
-
-          return data;
-        }
-
-        // entriesTableテーブルへ保存（全件置き換えしたい場合）
-        async function saveEntries(entriesTable) {
-          // まず全削除（必要ならトランザクション風に後でinsert）
-          const { error: deleteError } = await supabase
-            .from('entriesTable')
-            .delete()
-            .neq('id', 0); // 全削除（id ≠ 0）
-
-          if (deleteError) {
-            console.error('削除エラー:', deleteError);
-            return;
-          }
-
-          // 全データを挿入
-          const { error: insertError } = await supabase
-            .from('entriesTable')
-            .insert(entries);
-
-          if (insertError) {
-            console.error('追加エラー:', insertError);
-          }
-        }
   </script>
 </body>
 </html>
