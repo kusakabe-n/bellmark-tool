@@ -306,6 +306,7 @@
     function saveEntries(entries) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }
+ 
 
     // datalist更新（企業名候補）
     // function updateCompanyDatalist() {
@@ -520,6 +521,54 @@
     }
     init();
 
+  </script>
+
+
+    <script type="module">
+      // Supabaseの読み込み
+        import { createClient } from 'https://esm.sh/@supabase/supabase-js';
+
+        const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM';
+        const supabase = createClient(supabaseUrl, supabaseKey)
+
+        // entriesテーブルから全件取得
+        async function loadEntries() {
+          const { data, error } = await supabase
+            .from('entries')
+            .select('*')
+            .order('id', { ascending: true }); // ID順など任意で変更可
+
+          if (error) {
+            console.error('取得エラー:', error);
+            return [];
+          }
+
+          return data;
+        }
+
+        // entriesテーブルへ保存（全件置き換えしたい場合）
+        async function saveEntries(entries) {
+          // まず全削除（必要ならトランザクション風に後でinsert）
+          const { error: deleteError } = await supabase
+            .from('entries')
+            .delete()
+            .neq('id', 0); // 全削除（id ≠ 0）
+
+          if (deleteError) {
+            console.error('削除エラー:', deleteError);
+            return;
+          }
+
+          // 全データを挿入
+          const { error: insertError } = await supabase
+            .from('entries')
+            .insert(entries);
+
+          if (insertError) {
+            console.error('追加エラー:', insertError);
+          }
+        }
   </script>
 </body>
 </html>
