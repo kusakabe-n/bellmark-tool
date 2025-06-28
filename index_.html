@@ -397,17 +397,6 @@
     }
 
     async function renderSummary() {
-  //     const { data: entries, error } = await supabase
-  //   .from('bellmark')
-  //   .select('*')
-  //   .order('date', { ascending: false });
-
-  // if (error) {
-  //   console.error('データ取得エラー:', error.message);
-  //   return;
-  // }
-  
-
   // 日付フィルター取得
   const startDate = filterStart.value;
   const endDate = filterEnd.value;
@@ -422,16 +411,6 @@
 
   renderHistory(filtered); // ここで表示処理へ
 
-      // const entries = renderHistory();
-      // // 日付フィルター取得
-      // const startDate = filterStart.value;
-      // const endDate = filterEnd.value;
-      // // 絞り込み
-      // const filtered = entries.filter(e => {
-      //   if (startDate && e.date < startDate) return false;
-      //   if (endDate && e.date > endDate) return false;
-      //   return true;
-      // });
       // 企業ごと集計
       const summaryMap = {};
       // 合計値
@@ -493,21 +472,7 @@
 
     document.addEventListener('DOMContentLoaded', renderHistory);
 
-    //  // CSVダウンロード
-      //   async function loadEntries() {
-      //   const { data, error } = await supabase
-      //     .from('bellmark')
-      //     .select('*')
-      //     .order('date', { ascending: false });
-
-      //   if (error) {
-      //     console.error('データ取得失敗:', error.message);
-      //     return [];
-      //   }
-
-      //   return Array.isArray(data) ? data : [];
-      // }
-
+     // CSVダウンロード
       btnExportCsv?.addEventListener('click', async () => {
         const entries = await loadEntries(); // ← 正しいデータ取得
 
@@ -533,7 +498,6 @@
 
         downloadCSV(csv, 'bellmark_data.csv');
       });
-
       // CSV ダウンロード関数はそのままでOK
       function downloadCSV(text, filename) {
         const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
@@ -546,41 +510,6 @@
         link.click();
         document.body.removeChild(link);
       }
-    //  async function downloadCSV(text, filename) {
-    //   const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
-    //   const link = document.createElement('a');
-    //   const url = URL.createObjectURL(blob);
-    //   link.setAttribute('href', url);
-    //   link.setAttribute('download', filename);
-    //   link.style.visibility = 'hidden';
-    //   document.body.appendChild(link);
-    //   link.click();
-    //   document.body.removeChild(link);
-    // }
-    // btnExportCsv.addEventListener('click', () => {
-    //   const entries = renderHistory();
-    //   // フィルターを適用したリストをCSV化。ヘッダー付き
-    //   const startDate = filterStart.value;
-    //   const endDate = filterEnd.value;
-    //   const filtered = entries.filter(e => {
-    //     if (startDate && e.date < startDate) return false;
-    //     if (endDate && e.date > endDate) return false;
-    //     return true;
-    //   });
-    //   if (filtered.length === 0) {
-    //     alert('エクスポートするデータがありません');
-    //     return;
-    //   }
-    //   let csv = '企業名,日付,点数/枚,枚数,合計点数\n';
-    //   filtered.forEach(e => {
-    //     const total = e.point_per_ticket * e.count;
-    //     csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total}\n`;
-    //   });
-    //   // csv += `"合計","","","${totalCount}","${totalPoints.toFixed(1)}"\n`;
-
-    //   downloadCSV(csv, 'bellmark_data.csv');
-    // });
-
     // 初期化
      const inputDate = document.getElementById('input-date');
     const date = inputDate.value;
@@ -595,268 +524,7 @@
       showScreen('input');
     }
     init();
-</script><script>
-      
-// ******************
-    // // キー名
-    // const STORAGE_KEY = 'bellmark_entries';
-
-    // // 現在表示中の画面
-    // let currentScreen = 'input';
-
-    // // DOM要素参照
-    // const screens = {
-    //   input: document.getElementById('screen-input'),
-    //   history: document.getElementById('screen-history'),
-    //   summary: document.getElementById('screen-summary'),
-    // };
-    // const tabs = {
-    //   input: document.getElementById('tab-input'),
-    //   history: document.getElementById('tab-history'),
-    //   summary: document.getElementById('tab-summary'),
-    // };
-
-    // フォーム要素
-    // const formEntry = document.getElementById('form-entry');
-    // const inputCompany = document.getElementById('input-company');
-    // const datalistCompanies = document.getElementById('datalist-companies');
-    // const inputDate = document.getElementById('input-date');
-    // const inputPoint = document.getElementById('input-point');
-    // const inputCount = document.getElementById('input-count');
-
-    // 履歴要素
-    // const historyList = document.getElementById('history-list');
-
-    // // 集計要素
-    // const filterStart = document.getElementById('filter-start');
-    // const filterEnd = document.getElementById('filter-end');
-    // const btnApplyFilter = document.getElementById('btn-apply-filter');
-    // const btnClearFilter = document.getElementById('btn-clear-filter');
-    // const summaryTableBody = document.getElementById('summary-table-body');
-    // const summaryTotalBody = document.getElementById('summary-total-body');
-    // const btnExportCsv = document.getElementById('btn-export-csv');
-
-    // 画面切替
-    // function showScreen(name) {
-    //   for (const key in screens) {
-    //     screens[key].classList.toggle('hidden', key !== name);
-    //   }
-    //   // タブの強調
-    //   for (const key in tabs) {
-    //     tabs[key].classList.toggle('text-blue-500', key === name);
-    //   }
-    //   currentScreen = name;
-    //   // 履歴や集計を表示するときは最新データを反映
-    //   if (name === 'history') renderHistory();
-    //   if (name === 'summary') renderSummary();
-    // }
-    // タブクリック設定
-    // for (const [name, btn] of Object.entries(tabs)) {
-    //   btn.addEventListener('click', () => showScreen(name));
-    // }
-
-    // 新規エントリ登録
-    // formEntry.addEventListener('submit', (e) => {
-    //   e.preventDefault();
-    //   const company = inputCompany.value.trim();
-    //   const date = inputDate.value;
-    //   const point = parseFloat(inputPoint.value);
-    //   const count = parseInt(inputCount.value, 10);
-    //   if (!company || !date || isNaN(point) || isNaN(count)) {
-    //     alert('すべて正しく入力してください');
-    //     return;
-    //   }
-    //   const entries = loadEntries();
-    //   // idとしてtimestampを利用（簡易）
-    //   const id = Date.now().toString();
-    //   entries.push({ id, company, date, point_per_ticket: point, count });
-    //   saveEntries(entries);
-    //   // フォームクリア
-    //   formEntry.reset();
-    //   updateCompanyDatalist();
-    //   alert('保存しました');
-    // });
-
-    // 履歴画面描画
-    // function renderHistory() {
-    //   const entries = loadEntries();
-    //   // 新しい順に並べる（date降順＋時間順が同じならIDで）
-    //   entries.sort((a, b) => {
-    //     if (a.date !== b.date) return b.date.localeCompare(a.date);
-    //     return b.id.localeCompare(a.id);
-    //   });
-    //   historyList.innerHTML = '';
-    //   if (entries.length === 0) {
-    //     historyList.innerHTML = '<p class="text-center text-gray-500">データがありません</p>';
-    //     return;
-    //   }
-    //   entries.forEach(entry => {
-    //     const card = document.createElement('div');
-    //     card.className = 'bg-white p-3 rounded-lg shadow flex justify-between items-center';
-    //     // 左部：情報表示
-    //     const infoDiv = document.createElement('div');
-    //     infoDiv.innerHTML = `
-    //       <p class="font-medium">${entry.company} - ${entry.date}</p>
-    //       <p>点数/枚: ${entry.point_per_ticket}, 枚数: ${entry.count}, 合計: ${ (entry.point_per_ticket * entry.count) }</p>
-    //     `;
-    //     // 右部：編集・削除
-    //     const btnDiv = document.createElement('div');
-    //     btnDiv.className = 'flex space-x-2';
-    //     // 編集ボタン
-    //     const btnEdit = document.createElement('button');
-    //     btnEdit.textContent = '編集';
-    //     btnEdit.className = 'text-sm text-blue-500 hover:underline';
-    //     btnEdit.addEventListener('click', () => {
-    //       // 編集処理: 入力画面に値をセットして削除→再保存
-    //       showScreen('input');
-    //       inputCompany.value = entry.company;
-    //       inputDate.value = entry.date;
-    //       inputPoint.value = entry.point_per_ticket;
-    //       inputCount.value = entry.count;
-    //       // 古いエントリは一旦削除
-    //       const all = loadEntries().filter(e => e.id !== entry.id);
-    //       saveEntries(all);
-    //       updateCompanyDatalist();
-    //     });
-    //     // 削除ボタン
-    //     const btnDel = document.createElement('button');
-    //     btnDel.textContent = '削除';
-    //     btnDel.className = 'text-sm text-red-500 hover:underline';
-    //     btnDel.addEventListener('click', () => {
-    //       if (confirm('本当に削除しますか？')) {
-    //         const all = loadEntries().filter(e => e.id !== entry.id);
-    //         saveEntries(all);
-    //         renderHistory();
-    //         updateCompanyDatalist();
-    //       }
-    //     });
-    //     btnDiv.appendChild(btnEdit);
-    //     btnDiv.appendChild(btnDel);
-    //     card.appendChild(infoDiv);
-    //     card.appendChild(btnDiv);
-    //     historyList.appendChild(card);
-    //   });
-    // }
-
-    // 集計描画
-    // function renderSummary() {
-    //   const entries = loadEntries();
-    //   // 日付フィルター取得
-    //   const startDate = filterStart.value;
-    //   const endDate = filterEnd.value;
-    //   // 絞り込み
-    //   const filtered = entries.filter(e => {
-    //     if (startDate && e.date < startDate) return false;
-    //     if (endDate && e.date > endDate) return false;
-    //     return true;
-    //   });
-    //   // 企業ごと集計
-    //   const summaryMap = {};
-    //   // 合計値
-    //   let totalCountAll = 0;
-    //   let totalPointsAll = 0;
-    //   // 集計処理
-    //   filtered.forEach(e => {
-    //     if (!summaryMap[e.company]) {
-    //       summaryMap[e.company] = { totalCount: 0, totalPoints: 0 };
-    //     }
-    //     summaryMap[e.company].totalCount += e.count;
-    //     summaryMap[e.company].totalPoints += e.point_per_ticket * e.count;
-
-    //     // 全体合計
-    //     totalCountAll += e.count;
-    //     totalPointsAll += e.point_per_ticket * e.count;
-    //   });
-    //   // テーブル描画
-    //   summaryTableBody.innerHTML = '';
-    //   // const companies = Object.keys(summaryMap).sort();
-    //   const companies = Object.keys(summaryMap).sort((a, b) => {
-    //   const numA = parseInt(a.split(':')[0]);
-    //   const numB = parseInt(b.split(':')[0]);
-    //   return numA - numB;
-    // });
-    //   if (companies.length === 0) {
-    //     summaryTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">該当データがありません</td></tr>';
-    //     return;
-    //   }
-    //   companies.forEach(company => {
-    //     const { totalCount, totalPoints } = summaryMap[company];
-    //     const tr = document.createElement('tr');
-    //     tr.innerHTML = `
-    //       <td class="border px-4 py-2">${company}</td>
-    //       <td class="border px-4 py-2 text-right">${totalCount}</td>
-    //       <td class="border px-4 py-2 text-right">${totalPoints}</td>
-    //     `;
-    //     summaryTableBody.appendChild(tr);
-    //   });
-    //   // 合計行の描画
-    //   const summaryTotalBody = document.getElementById('summary-total-body');
-    //   summaryTotalBody.innerHTML = `
-    //   <td class="border px-4 py-2"></td>
-    //   <td class="border px-4 py-2 text-right">${totalCountAll} 枚</td>
-    //   <td class="border px-4 py-2 text-right">${totalPointsAll.toFixed(1)} 点</td>
-    //   `;
-    // }
-    
-    // // フィルター適用・クリア
-    // btnApplyFilter.addEventListener('click', () => {
-    //   renderSummary();
-    // });
-    // btnClearFilter.addEventListener('click', () => {
-    //   filterStart.value = '';
-    //   filterEnd.value = '';
-    //   renderSummary();
-    // });
-
-    // // CSVダウンロード
-    // function downloadCSV(text, filename) {
-    //   const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
-    //   const link = document.createElement('a');
-    //   const url = URL.createObjectURL(blob);
-    //   link.setAttribute('href', url);
-    //   link.setAttribute('download', filename);
-    //   link.style.visibility = 'hidden';
-    //   document.body.appendChild(link);
-    //   link.click();
-    //   document.body.removeChild(link);
-    // }
-    // btnExportCsv.addEventListener('click', () => {
-    //   const entries = loadEntries();
-    //   // フィルターを適用したリストをCSV化。ヘッダー付き
-    //   const startDate = filterStart.value;
-    //   const endDate = filterEnd.value;
-    //   const filtered = entries.filter(e => {
-    //     if (startDate && e.date < startDate) return false;
-    //     if (endDate && e.date > endDate) return false;
-    //     return true;
-    //   });
-    //   if (filtered.length === 0) {
-    //     alert('エクスポートするデータがありません');
-    //     return;
-    //   }
-    //   let csv = '企業名,日付,点数/枚,枚数,合計点数\n';
-    //   filtered.forEach(e => {
-    //     const total = e.point_per_ticket * e.count;
-    //     csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total}\n`;
-    //   });
-    //   // csv += `"合計","","","${totalCount}","${totalPoints.toFixed(1)}"\n`;
-
-    //   downloadCSV(csv, 'bellmark_data.csv');
-    // });
-
-    // // 初期化
-    // function init() {
-    //   // 日付初期値に今日をセット（入力画面）
-    //   const today = new Date().toISOString().split('T')[0];
-    //   inputDate.value = today;
-    //   // datalist更新
-    //   // updateCompanyDatalist();
-    //   // デフォルト画面
-    //   showScreen('input');
-    // }
-    // init();
-
-  </script>
+</script>
 </body>
 </html>
 
