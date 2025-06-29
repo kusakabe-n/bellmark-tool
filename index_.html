@@ -289,6 +289,12 @@
         return data;
       }
 
+      // 入力フォームの要素
+const inputCompany = document.getElementById('input-company');
+const inputDate = document.getElementById('input-date');
+const inputPoint = document.getElementById('input-point');
+const inputCount = document.getElementById('input-count');
+
     // データ取得（例：履歴表示）
     async function renderHistory(){
       const { data, error } = await supabase
@@ -301,6 +307,83 @@
         return;
       }
 
+    
+     
+
+   const entries = data; 
+       // 新しい順に並べる（date降順＋時間順が同じならIDで）
+      entries.sort((a, b) => {
+        if (a.date !== b.date) return b.date.localeCompare(a.date);
+        return b.id.localeCompare(a.id);
+      });
+      historyList.innerHTML = '';
+      if (entries.length === 0) {
+        historyList.innerHTML = '<p class="text-center text-gray-500">データがありません</p>';
+        return;
+      }
+      entries.forEach(entry => {
+        const card = document.createElement('div');
+        card.className = 'bg-white p-3 rounded-lg shadow flex justify-between items-center';
+        // 左部：情報表示
+        const infoDiv = document.createElement('div');
+        infoDiv.innerHTML = `
+          <p class="font-medium">${entry.company} - ${entry.date}</p>
+          <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${ (entry.point_per_ticket * entry.count) }</p>
+        `;
+        // 右部：編集・削除
+        const btnDiv = document.createElement('div');
+        btnDiv.className = 'flex space-x-2';
+        // 編集ボタン
+        const btnEdit = document.createElement('button');
+        btnEdit.textContent = '編集';
+        btnEdit.className = 'text-sm text-blue-500 hover:underline';
+        // btnEdit.addEventListener('click', () => {
+        btnEdit.addEventListener('click', async () => {
+          // 編集処理: 入力画面に値をセットして削除→再保存
+          showScreen('input');
+          inputCompany.value = entry.company;
+          inputDate.value = entry.date;
+          inputPoint.value = entry.point_per_ticket;
+          inputCount.value = entry.count;
+          // 古いエントリは一旦削除
+          const { error: deleteError } = await supabase
+          .from('bellmark')
+            .delete()
+            .eq('id', entry.id);
+      if (deleteError) {
+        alert('削除に失敗しました');
+        console.error(deleteError);
+      } else {
+        renderHistory();
+      }
+        });
+        // 削除ボタン
+        const btnDel = document.createElement('button');
+        btnDel.textContent = '削除';
+        btnDel.className = 'text-sm text-red-500 hover:underline';
+        btnDel.addEventListener('click', async () => {
+      if (confirm('本当に削除しますか？')) {
+        const { error: deleteError } = await supabase
+          .from('bellmark')
+          .delete()
+          .eq('id', entry.id);
+
+        if (deleteError) {
+          alert('削除に失敗しました');
+          console.error(deleteError);
+        } else {
+          renderHistory();
+        }
+      }
+        });
+        btnDiv.appendChild(btnEdit);
+        btnDiv.appendChild(btnDel);
+        card.appendChild(infoDiv);
+        card.appendChild(btnDiv);
+        historyList.appendChild(card);
+      });
+      return data;
+    }
     // データ登録（フォーム送信時）
     const form = document.getElementById('form-entry');
     const historyList = document.getElementById('history-list');
@@ -332,70 +415,10 @@
       } else {
         alert('保存しました');
         form.reset();
-        renderHistory();
+        await renderHistory(); // ← 保存後に履歴を更新
       }
     });
-     
-
-   const entries = data; 
-       // 新しい順に並べる（date降順＋時間順が同じならIDで）
-      entries.sort((a, b) => {
-        if (a.date !== b.date) return b.date.localeCompare(a.date);
-        return b.id.localeCompare(a.id);
-      });
-      historyList.innerHTML = '';
-      if (entries.length === 0) {
-        historyList.innerHTML = '<p class="text-center text-gray-500">データがありません</p>';
-        return;
-      }
-      entries.forEach(entry => {
-        const card = document.createElement('div');
-        card.className = 'bg-white p-3 rounded-lg shadow flex justify-between items-center';
-        // 左部：情報表示
-        const infoDiv = document.createElement('div');
-        infoDiv.innerHTML = `
-          <p class="font-medium">${entry.company} - ${entry.date}</p>
-          <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${ (entry.point_per_ticket * entry.count) }</p>
-        `;
-        // 右部：編集・削除
-        const btnDiv = document.createElement('div');
-        btnDiv.className = 'flex space-x-2';
-        // 編集ボタン
-        const btnEdit = document.createElement('button');
-        btnEdit.textContent = '編集';
-        btnEdit.className = 'text-sm text-blue-500 hover:underline';
-        btnEdit.addEventListener('click', () => {
-          // 編集処理: 入力画面に値をセットして削除→再保存
-          showScreen('input');
-          inputCompany.value = entry.company;
-          inputDate.value = entry.date;
-          inputPoint.value = entry.point_per_ticket;
-          inputCount.value = entry.count;
-          // 古いエントリは一旦削除
-          const all = renderHistory().filter(e => e.id !== entry.id);
-          saveEntries(all);
-          updateCompanyDatalist();
-        });
-        // 削除ボタン
-        const btnDel = document.createElement('button');
-        btnDel.textContent = '削除';
-        btnDel.className = 'text-sm text-red-500 hover:underline';
-        btnDel.addEventListener('click', () => {
-          if (confirm('本当に削除しますか？')) {
-            const all = renderHistory().filter(e => e.id !== entry.id);
-            saveEntries(all);
-            renderHistory();
-            updateCompanyDatalist();
-          }
-        });
-        btnDiv.appendChild(btnEdit);
-        btnDiv.appendChild(btnDel);
-        card.appendChild(infoDiv);
-        card.appendChild(btnDiv);
-        historyList.appendChild(card);
-      });
-    }
-
+    // 履歴表示
     async function renderSummary() {
   // 日付フィルター取得
   const startDate = filterStart.value;
@@ -449,6 +472,47 @@
           <td class="border px-4 py-2 text-right">${totalPoints}</td>
         `;
         summaryTableBody.appendChild(tr);
+      });
+      // 企業ごとに集計（点数ごとに分類）
+      const grouped = {};
+      data.forEach(entry => {
+        const { company, point_per_ticket, count } = entry;
+        if (!grouped[company]) grouped[company] = {};
+        if (!grouped[company][point_per_ticket]) {
+          grouped[company][point_per_ticket] = 0;
+        }
+        grouped[company][point_per_ticket] += count;
+      });
+      Object.entries(grouped).forEach(([company, points]) => {
+        const totalCount = Object.values(points).reduce((a, b) => a + b, 0);
+        const totalPoint = Object.entries(points).reduce(
+          (sum, [pt, count]) => sum + pt * count, 0
+        );
+
+        const row = document.createElement('div');
+        row.innerHTML = `
+    <p class="font-semibold">${company}</p>
+    <p>合計枚数: ${totalCount}枚, 合計点数: ${totalPoint}点</p>
+    <button class="btn-detail" data-company="${company}">詳細</button>
+    <div class="details hidden" id="details-${company}"></div>
+  `;
+        document.getElementById('summary-area').appendChild(row);
+      });
+      document.querySelectorAll('.btn-detail').forEach(button => {
+        button.addEventListener('click', () => {
+          const company = button.dataset.company;
+          const detailDiv = document.getElementById(`details-${company}`);
+          const pointData = grouped[company];
+
+          let html = '<ul>';
+          Object.entries(pointData).forEach(([pt, count]) => {
+            html += `<li>${pt}点 × ${count}枚 = ${pt * count}点</li>`;
+          });
+          html += '</ul>';
+
+          detailDiv.innerHTML = html;
+          detailDiv.classList.toggle('hidden');
+        });
       });
       // 合計行の描画
       const summaryTotalBody = document.getElementById('summary-total-body');
@@ -511,7 +575,7 @@
         document.body.removeChild(link);
       }
     // 初期化
-     const inputDate = document.getElementById('input-date');
+    //  const inputDate = document.getElementById('input-date');
     const date = inputDate.value;
 
     async function init() {
