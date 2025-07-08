@@ -24,6 +24,7 @@
           <!-- 企業名 -->
           <div>
           
+
             <label for="input-company" class="block mb-1">
               協賛企業
               <input list="datalist-companies" id="input-company" class="w-full border rounded px-3 py-2" placeholder="--選択してください-">
@@ -32,6 +33,7 @@
             <!-- datalistの候補 -->
             <datalist id="datalist-companies">
               <!-- <option value="--選択してください--"></option> -->
+
               <option value="1: イオンリテール"></option>
               <option value="3: ラッキーベル"></option>
               <option value=" 4: ニッスイ"></option>
@@ -76,34 +78,32 @@
               <option value=" 92: あいおいニッセイ同和損害保険"></option>
               <option value=" 93: 石井食品"></option>
             </datalist>
+
           </div>
           <!-- 日付 -->
           <div>
             <label for="input-date" class="block mb-1">日付</label>
-            <input type="date" id="input-date" required
-              class="w-full border rounded px-3 py-2" />
+            <input type="date" id="input-date" required class="w-full border rounded px-3 py-2" />
           </div>
           <!-- 1枚の点数 -->
           <div>
             <label for="input-point" class="block mb-1">1枚の点数</label>
-            <input type="number" id="input-point" required step="0.1" min="0"
-              class="w-full border rounded px-3 py-2" placeholder="例：1 or 0.5" />
+            <input type="number" id="input-point" required step="0.1" min="0" class="w-full border rounded px-3 py-2"
+              placeholder="例：1 or 0.5" />
           </div>
           <!-- 枚数 -->
           <div>
             <label for="input-count" class="block mb-1">枚数</label>
-            <input type="number" id="input-count" required min="1"
-              class="w-full border rounded px-3 py-2" placeholder="例：5" />
+            <input type="number" id="input-count" required min="1" class="w-full border rounded px-3 py-2" placeholder="例：5" />
           </div>
           <!-- ボタン -->
           <div class="text-center">
-            <button type="submit"
-              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
               保存
             </button>
           </div>
-        </form>
-      </div>
+          </form>
+          </div>
 
       <!-- 履歴画面 -->
       <div id="screen-history" class="screen hidden">
@@ -304,6 +304,7 @@ const inputCount = document.getElementById('input-count');
 
       if (error) {
         console.error('読み込みエラー:', error);
+
         return;
       }
 
@@ -588,7 +589,9 @@ const inputCount = document.getElementById('input-count');
       showScreen('input');
     }
     init();
+
 </script>
+
 </body>
 </html>
 
