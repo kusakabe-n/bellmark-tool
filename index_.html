@@ -23,14 +23,17 @@
 
           <!-- 企業名 -->
           <div>
+          
+
             <label for="input-company" class="block mb-1">
               協賛企業
-              <input list="datalist-companies" id="input-company" class="w-full border rounded px-3 py-2">
+              <input list="datalist-companies" id="input-company" class="w-full border rounded px-3 py-2" placeholder="--選択してください-">
             </label>
           
             <!-- datalistの候補 -->
             <datalist id="datalist-companies">
-              <option value="--選択してください--"></option>
+              <!-- <option value="--選択してください--"></option> -->
+
               <option value="1: イオンリテール"></option>
               <option value="3: ラッキーベル"></option>
               <option value=" 4: ニッスイ"></option>
@@ -74,10 +77,8 @@
               <option value=" 91: トヤマ楽器製造"></option>
               <option value=" 92: あいおいニッセイ同和損害保険"></option>
               <option value=" 93: 石井食品"></option>
-          
             </datalist>
-          
-          
+
           </div>
           <!-- 日付 -->
           <div>
@@ -220,9 +221,17 @@
   </div>
 
   <!-- JavaScript -->
-  <script>
+   <!-- Supabaseクライアントを設定 -->
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Supabase情報
+    const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     // キー名
-    const STORAGE_KEY = 'bellmark_entries';
+    // const STORAGE_KEY = 'bellmark_entries';
 
     // 現在表示中の画面
     let currentScreen = 'input';
@@ -238,19 +247,7 @@
       history: document.getElementById('tab-history'),
       summary: document.getElementById('tab-summary'),
     };
-
-    // フォーム要素
-    const formEntry = document.getElementById('form-entry');
-    const inputCompany = document.getElementById('input-company');
-    const datalistCompanies = document.getElementById('datalist-companies');
-    const inputDate = document.getElementById('input-date');
-    const inputPoint = document.getElementById('input-point');
-    const inputCount = document.getElementById('input-count');
-
-    // 履歴要素
-    const historyList = document.getElementById('history-list');
-
-    // 集計要素
+     // 集計要素
     const filterStart = document.getElementById('filter-start');
     const filterEnd = document.getElementById('filter-end');
     const btnApplyFilter = document.getElementById('btn-apply-filter');
@@ -259,8 +256,8 @@
     const summaryTotalBody = document.getElementById('summary-total-body');
     const btnExportCsv = document.getElementById('btn-export-csv');
 
-    // 画面切替
-    function showScreen(name) {
+      // 画面切替
+    async function showScreen(name) {
       for (const key in screens) {
         screens[key].classList.toggle('hidden', key !== name);
       }
@@ -277,83 +274,45 @@
     for (const [name, btn] of Object.entries(tabs)) {
       btn.addEventListener('click', () => showScreen(name));
     }
+     // データ取得関数
+      async function loadEntries() {
+        const { data, error } = await supabase
+          .from('bellmark')
+          .select('*')
+          .order('date', { ascending: false });
 
-    // localStorageから全エントリ取得
-    // function loadEntries() {
-    //   const json = localStorage.getItem(STORAGE_KEY);
-    //   if (!json) return [];
-    //   try {
-    //     return JSON.parse(json);
-    //   } catch {
-    //     return [];
-    //   }
-    // }
-    // localStorageへ保存
-    // function saveEntries(entries) {
-    //   localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    // }
+        if (error) {
+          console.error('読み込みエラー:', error);
+          return [];
+        }
 
-    // 登録関数（呼び出せばデータ送信）
-    async function saveEntry(entry) {
+        return data;
+      }
+
+      // 入力フォームの要素
+const inputCompany = document.getElementById('input-company');
+const inputDate = document.getElementById('input-date');
+const inputPoint = document.getElementById('input-point');
+const inputCount = document.getElementById('input-count');
+
+    // データ取得（例：履歴表示）
+    async function renderHistory(){
       const { data, error } = await supabase
-        .from('entries')
-        .insert([entry]);
+        .from('bellmark')
+        .select('*')
+        .order('date', { ascending: false });
 
       if (error) {
-        console.error('送信エラー', error);
-      } else {
-        console.log('保存完了', data);
-      }
-    }
-    // 集計や取得(全件)
-    async function getEntries() {
-      const { data, error } = await supabase
-        .from('entries')
-        .select('*');
+        console.error('読み込みエラー:', error);
 
-      if (error) console.error(error);
-      else console.log('取得データ:', data);
-    }
- 
-
-    // datalist更新（企業名候補）
-    // function updateCompanyDatalist() {
-    //   const entries = loadEntries();
-    //   const companies = Array.from(new Set(entries.map(e => e.company)));
-    //   datalistCompanies.innerHTML = '';
-    //   companies.forEach(name => {
-    //     const opt = document.createElement('option');
-    //     opt.value = name;
-    //     datalistCompanies.appendChild(opt);
-    //   });
-    // }
-
-    // 新規エントリ登録
-    formEntry.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const company = inputCompany.value.trim();
-      const date = inputDate.value;
-      const point = parseFloat(inputPoint.value);
-      const count = parseInt(inputCount.value, 10);
-      if (!company || !date || isNaN(point) || isNaN(count)) {
-        alert('すべて正しく入力してください');
         return;
       }
-      const entries = loadEntries();
-      // idとしてtimestampを利用（簡易）
-      const id = Date.now().toString();
-      entries.push({ id, company, date, point_per_ticket: point, count });
-      saveEntries(entries);
-      // フォームクリア
-      formEntry.reset();
-      updateCompanyDatalist();
-      alert('保存しました');
-    });
 
-    // 履歴画面描画
-    function renderHistory() {
-      const entries = loadEntries();
-      // 新しい順に並べる（date降順＋時間順が同じならIDで）
+    
+     
+
+   const entries = data; 
+       // 新しい順に並べる（date降順＋時間順が同じならIDで）
       entries.sort((a, b) => {
         if (a.date !== b.date) return b.date.localeCompare(a.date);
         return b.id.localeCompare(a.id);
@@ -370,7 +329,7 @@
         const infoDiv = document.createElement('div');
         infoDiv.innerHTML = `
           <p class="font-medium">${entry.company} - ${entry.date}</p>
-          <p>点数/枚: ${entry.point_per_ticket}, 枚数: ${entry.count}, 合計: ${ (entry.point_per_ticket * entry.count) }</p>
+          <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${ (entry.point_per_ticket * entry.count) }</p>
         `;
         // 右部：編集・削除
         const btnDiv = document.createElement('div');
@@ -379,7 +338,8 @@
         const btnEdit = document.createElement('button');
         btnEdit.textContent = '編集';
         btnEdit.className = 'text-sm text-blue-500 hover:underline';
-        btnEdit.addEventListener('click', () => {
+        // btnEdit.addEventListener('click', () => {
+        btnEdit.addEventListener('click', async () => {
           // 編集処理: 入力画面に値をセットして削除→再保存
           showScreen('input');
           inputCompany.value = entry.company;
@@ -387,21 +347,35 @@
           inputPoint.value = entry.point_per_ticket;
           inputCount.value = entry.count;
           // 古いエントリは一旦削除
-          const all = loadEntries().filter(e => e.id !== entry.id);
-          saveEntries(all);
-          updateCompanyDatalist();
+          const { error: deleteError } = await supabase
+          .from('bellmark')
+            .delete()
+            .eq('id', entry.id);
+      if (deleteError) {
+        alert('削除に失敗しました');
+        console.error(deleteError);
+      } else {
+        renderHistory();
+      }
         });
         // 削除ボタン
         const btnDel = document.createElement('button');
         btnDel.textContent = '削除';
         btnDel.className = 'text-sm text-red-500 hover:underline';
-        btnDel.addEventListener('click', () => {
-          if (confirm('本当に削除しますか？')) {
-            const all = loadEntries().filter(e => e.id !== entry.id);
-            saveEntries(all);
-            renderHistory();
-            updateCompanyDatalist();
-          }
+        btnDel.addEventListener('click', async () => {
+      if (confirm('本当に削除しますか？')) {
+        const { error: deleteError } = await supabase
+          .from('bellmark')
+          .delete()
+          .eq('id', entry.id);
+
+        if (deleteError) {
+          alert('削除に失敗しました');
+          console.error(deleteError);
+        } else {
+          renderHistory();
+        }
+      }
         });
         btnDiv.appendChild(btnEdit);
         btnDiv.appendChild(btnDel);
@@ -409,20 +383,58 @@
         card.appendChild(btnDiv);
         historyList.appendChild(card);
       });
+      return data;
     }
+    // データ登録（フォーム送信時）
+    const form = document.getElementById('form-entry');
+    const historyList = document.getElementById('history-list');
 
-    // 集計描画
-    function renderSummary() {
-      const entries = loadEntries();
-      // 日付フィルター取得
-      const startDate = filterStart.value;
-      const endDate = filterEnd.value;
-      // 絞り込み
-      const filtered = entries.filter(e => {
-        if (startDate && e.date < startDate) return false;
-        if (endDate && e.date > endDate) return false;
-        return true;
-      });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const company = document.getElementById('input-company').value.trim();
+      const date = document.getElementById('input-date').value;
+      const inputDate = document.getElementById('input-date').value;
+      const point = parseFloat(document.getElementById('input-point').value);
+      const count = parseInt(document.getElementById('input-count').value);
+      
+
+      if (!company || !date || isNaN(point) || isNaN(count)) {
+        alert('すべて正しく入力してください');
+        return;
+      }
+
+      const { error } = await supabase.from('bellmark').insert([{
+        company,
+        date,
+        point_per_ticket: point,
+        count
+      }]);
+
+      if (error) {
+        alert('保存に失敗しました');
+        console.error(error);
+      } else {
+        alert('保存しました');
+        form.reset();
+        await renderHistory(); // ← 保存後に履歴を更新
+      }
+    });
+    // 履歴表示
+    async function renderSummary() {
+  // 日付フィルター取得
+  const startDate = filterStart.value;
+  const endDate = filterEnd.value;
+
+  // 絞り込み
+  const entries = await loadEntries();
+  const filtered = entries.filter(e => {
+    if (startDate && e.date < startDate) return false;
+    if (endDate && e.date > endDate) return false;
+    return true;
+  });
+
+  renderHistory(filtered); // ここで表示処理へ
+
       // 企業ごと集計
       const summaryMap = {};
       // 合計値
@@ -462,6 +474,47 @@
         `;
         summaryTableBody.appendChild(tr);
       });
+      // 企業ごとに集計（点数ごとに分類）
+      const grouped = {};
+      data.forEach(entry => {
+        const { company, point_per_ticket, count } = entry;
+        if (!grouped[company]) grouped[company] = {};
+        if (!grouped[company][point_per_ticket]) {
+          grouped[company][point_per_ticket] = 0;
+        }
+        grouped[company][point_per_ticket] += count;
+      });
+      Object.entries(grouped).forEach(([company, points]) => {
+        const totalCount = Object.values(points).reduce((a, b) => a + b, 0);
+        const totalPoint = Object.entries(points).reduce(
+          (sum, [pt, count]) => sum + pt * count, 0
+        );
+
+        const row = document.createElement('div');
+        row.innerHTML = `
+    <p class="font-semibold">${company}</p>
+    <p>合計枚数: ${totalCount}枚, 合計点数: ${totalPoint}点</p>
+    <button class="btn-detail" data-company="${company}">詳細</button>
+    <div class="details hidden" id="details-${company}"></div>
+  `;
+        document.getElementById('summary-area').appendChild(row);
+      });
+      document.querySelectorAll('.btn-detail').forEach(button => {
+        button.addEventListener('click', () => {
+          const company = button.dataset.company;
+          const detailDiv = document.getElementById(`details-${company}`);
+          const pointData = grouped[company];
+
+          let html = '<ul>';
+          Object.entries(pointData).forEach(([pt, count]) => {
+            html += `<li>${pt}点 × ${count}枚 = ${pt * count}点</li>`;
+          });
+          html += '</ul>';
+
+          detailDiv.innerHTML = html;
+          detailDiv.classList.toggle('hidden');
+        });
+      });
       // 合計行の描画
       const summaryTotalBody = document.getElementById('summary-total-body');
       summaryTotalBody.innerHTML = `
@@ -481,103 +534,64 @@
       renderSummary();
     });
 
-    // CSVダウンロード
-    function downloadCSV(text, filename) {
-      const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', filename);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
-    btnExportCsv.addEventListener('click', () => {
-      const entries = loadEntries();
-      // フィルターを適用したリストをCSV化。ヘッダー付き
-      const startDate = filterStart.value;
-      const endDate = filterEnd.value;
-      const filtered = entries.filter(e => {
-        if (startDate && e.date < startDate) return false;
-        if (endDate && e.date > endDate) return false;
-        return true;
+
+    document.addEventListener('DOMContentLoaded', renderHistory);
+
+     // CSVダウンロード
+      btnExportCsv?.addEventListener('click', async () => {
+        const entries = await loadEntries(); // ← 正しいデータ取得
+
+        const startDate = filterStart.value;
+        const endDate = filterEnd.value;
+
+        const filtered = entries.filter(e => {
+          if (startDate && e.date < startDate) return false;
+          if (endDate && e.date > endDate) return false;
+          return true;
+        });
+
+        if (filtered.length === 0) {
+          alert('エクスポートするデータがありません');
+          return;
+        }
+
+        let csv = '企業名,日付,点数/枚,枚数,合計点数\n';
+        filtered.forEach(e => {
+          const total = e.point_per_ticket * e.count;
+          csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total}\n`;
+        });
+
+        downloadCSV(csv, 'bellmark_data.csv');
       });
-      if (filtered.length === 0) {
-        alert('エクスポートするデータがありません');
-        return;
+      // CSV ダウンロード関数はそのままでOK
+      function downloadCSV(text, filename) {
+        const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
-      let csv = '企業名,日付,点数/枚,枚数,合計点数\n';
-      filtered.forEach(e => {
-        const total = e.point_per_ticket * e.count;
-        csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total}\n`;
-      });
-      // csv += `"合計","","","${totalCount}","${totalPoints.toFixed(1)}"\n`;
-
-      downloadCSV(csv, 'bellmark_data.csv');
-    });
-
     // 初期化
-    function init() {
+    //  const inputDate = document.getElementById('input-date');
+    const date = inputDate.value;
+
+    async function init() {
       // 日付初期値に今日をセット（入力画面）
       const today = new Date().toISOString().split('T')[0];
       inputDate.value = today;
       // datalist更新
-      updateCompanyDatalist();
+      // updateCompanyDatalist();
       // デフォルト画面
       showScreen('input');
     }
     init();
 
-  </script>
+</script>
 
-
-    <script type="module">
-      // Supabaseの読み込み
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js';
-
-        const supabaseUrl = 'https://xownvjtpbomrxdegceti.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvd252anRwYm9tcnhkZWdjZXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA4NDc2OTgsImV4cCI6MjA2NjQyMzY5OH0.Go1vYCfTio9-R5cTtVcPrrrpHOsXFNxCxC2ODbUu3NM';
-        const supabase = createClient(supabaseUrl, supabaseKey)
-
-        // entriesTableテーブルから全件取得
-        async function loadEntries() {
-          const { data, error } = await supabase
-            .from('entriesTable')
-            .select('*')
-            .order('id', { ascending: true }); // ID順など任意で変更可
-
-          if (error) {
-            console.error('取得エラー:', error);
-            return [];
-          }
-
-          return data;
-        }
-
-        // entriesTableテーブルへ保存（全件置き換えしたい場合）
-        async function saveEntries(entriesTable) {
-          // まず全削除（必要ならトランザクション風に後でinsert）
-          const { error: deleteError } = await supabase
-            .from('entriesTable')
-            .delete()
-            .neq('id', 0); // 全削除（id ≠ 0）
-
-          if (deleteError) {
-            console.error('削除エラー:', deleteError);
-            return;
-          }
-
-          // 全データを挿入
-          const { error: insertError } = await supabase
-            .from('entriesTable')
-            .insert(entries);
-
-          if (insertError) {
-            console.error('追加エラー:', insertError);
-          }
-        }
-  </script>
 </body>
 </html>
 
