@@ -6,14 +6,28 @@
   <title>ベルマーク集計Webアプリ</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
+  <style>
+    .footer-fixed{
+    position: fixed;
+    bottom: env(safe-area-inset-bottom, 0);
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+    z-index: 50;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+  </style>
+  
+
+  </head>
 <body class="bg-gray-100 text-gray-800">
 
   <!-- メインコンテナ -->
   <div id="app" class="min-h-screen flex flex-col">
 
     <!-- コンテンツ部分 -->
-    <main class="flex-grow p-4">
+    <main class="flex-grow p-4 mb-24">
       <!-- 各画面を切り替える要素 -->
       <!-- 入力画面 -->
       <div id="screen-input" class="screen">
@@ -23,18 +37,67 @@
 
           <!-- 企業名 -->
           <div>
+            <label for="input-company" class="block mb-1">
+              協賛企業
+              <select id="input-company" class="w-full border rounded px-3 py-2">
+                <option value="">--選択してください--</option>
+                <option value="1: イオンリテール">1: イオンリテール</option>
+                <option value="3: ラッキーベル">3: ラッキーベル</option>
+                <option value="4: ニッスイ">4: ニッスイ</option>
+                <option value="5: 日本ノート">5: 日本ノート</option>
+                <option value="6: DM三井製糖">6: DM三井製糖</option>
+                <option value="7: キユーピー">7: キユーピー</option>
+                <option value="9: エスビー食品">9: エスビー食品</option>
+                <option value="10: クレハ">10: クレハ</option>
+                <option value="11: リネットジャパンリサイクル">11: リネットジャパンリサイクル</option>
+                <option value="15: ジブラルタ生命保険">15: ジブラルタ生命保険</option>
+                <option value="17: 日本テトラパック">17: 日本テトラパック</option>
+                <option value="18: 日清オイリオグループ">18: 日清オイリオグループ</option>
+                <option value="19: キヤノンマーケティングジャパン">19: キヤノンマーケティングジャパン</option>
+                <option value="21: スリーエム ジャパン">21: スリーエム ジャパン</option>
+                <option value="24: 日清製粉ウェルナ">24: 日清製粉ウェルナ</option>
+                <option value="25: 明治">25: 明治</option>
+                <option value="26: 森永製菓">26: 森永製菓</option>
+                <option value="28: ブラザー販売">28: ブラザー販売</option>
+                <option value="29: アサヒ飲料">29: アサヒ飲料</option>
+                <option value="31: 新学社">31: 新学社</option>
+                <option value="33: ヤマハミュージックジャパン">33: ヤマハミュージックジャパン</option>
+                <option value="35: 日清食品">35: 日清食品</option>
+                <option value="39: ファインプラス">39: ファインプラス</option>
+                <option value="43: 東芝ライフスタイル">43: 東芝ライフスタイル</option>
+                <option value="48: ブルボン">48: ブルボン</option>
+                <option value="52: ナカバヤシ">52: ナカバヤシ</option>
+                <option value="53: ショウワノート">53: ショウワノート</option>
+                <option value="54: キリンビバレッジ">54: キリンビバレッジ</option>
+                <option value="55: クツワ">55: クツワ</option>
+                <option value="56: グリーンスタンプ">56: グリーンスタンプ</option>
+                <option value="64: マルトモ">64: マルトモ</option>
+                <option value="70: スミフルジャパン">70: スミフルジャパン</option>
+                <option value="73: エプソン販売">73: エプソン販売</option>
+                <option value="76: ＮＧＰ日本自動車リサイクル事業協同組合">76: ＮＧＰ日本自動車リサイクル事業協同組合</option>
+                <option value="77: 湖池屋">77: 湖池屋</option>
+                <option value="78: グンゼ">78: グンゼ</option>
+                <option value="83: 味の素">83: 味の素</option>
+                <option value="84: セメダイン">84: セメダイン</option>
+                <option value="88: ニチレイ">88: ニチレイ</option>
+                <option value="89: 白鶴酒造">89: 白鶴酒造</option>
+                <option value="91: トヤマ楽器製造">91: トヤマ楽器製造</option>
+                <option value="92: あいおいニッセイ同和損害保険">92: あいおいニッセイ同和損害保険</option>
+                <option value="93: 石井食品">93: 石井食品</option>
+              </select>
+            </label>
           
 
-            <label for="input-company" class="block mb-1">
+            <!-- <label for="input-company" class="block mb-1">
               協賛企業
               <input list="datalist-companies" id="input-company" class="w-full border rounded px-3 py-2" placeholder="--選択してください-">
             </label>
           
             <!-- datalistの候補 -->
-            <datalist id="datalist-companies">
+            <!-- <datalist id="datalist-companies"> -->
               <!-- <option value="--選択してください--"></option> -->
 
-              <option value="1: イオンリテール"></option>
+              <!-- <option value="1: イオンリテール"></option>
               <option value="3: ラッキーベル"></option>
               <option value=" 4: ニッスイ"></option>
               <option value=" 5: 日本ノート"></option>
@@ -77,7 +140,7 @@
               <option value=" 91: トヤマ楽器製造"></option>
               <option value=" 92: あいおいニッセイ同和損害保険"></option>
               <option value=" 93: 石井食品"></option>
-            </datalist>
+            </datalist> --> 
 
           </div>
           <!-- 日付 -->
@@ -140,6 +203,7 @@
           </div>
         </div>
         <!-- 集計結果表示 -->
+         <!-- <div id="summary-area"> -->
         <div class="overflow-x-auto">
           <table class="min-w-full bg-white rounded-lg shadow">
             <thead>
@@ -154,6 +218,7 @@
             </tbody>
           </table>
         </div>
+        <!-- </div> -->
         <!-- 合計表示（追加） -->
         <div class="mt-4 overflow-x-auto">
            <table class="min-w-full bg-white rounded-lg shadow">
@@ -169,6 +234,7 @@
             </tbody>
           </table>
         </div>
+        
         <!-- （任意でCSV出力など） -->
         <div class="mt-4 text-center">
           <button id="btn-export-csv"
@@ -180,7 +246,7 @@
     </main>
 
     <!-- ボトムナビゲーション -->
-    <nav class="bg-white border-t">
+    <nav class="bg-white border-t footer-fixed">
       <ul class="flex">
         <li class="flex-grow">
           <button data-screen="input"
@@ -295,6 +361,7 @@ const inputDate = document.getElementById('input-date');
 const inputPoint = document.getElementById('input-point');
 const inputCount = document.getElementById('input-count');
 
+
     // データ取得（例：履歴表示）
     async function renderHistory(){
       const { data, error } = await supabase
@@ -329,7 +396,7 @@ const inputCount = document.getElementById('input-count');
         const infoDiv = document.createElement('div');
         infoDiv.innerHTML = `
           <p class="font-medium">${entry.company} - ${entry.date}</p>
-          <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${ (entry.point_per_ticket * entry.count) }</p>
+          <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${parseFloat((entry.point_per_ticket * entry.count).toFixed(1))}</p>
         `;
         // 右部：編集・削除
         const btnDiv = document.createElement('div');
@@ -446,11 +513,11 @@ const inputCount = document.getElementById('input-count');
           summaryMap[e.company] = { totalCount: 0, totalPoints: 0 };
         }
         summaryMap[e.company].totalCount += e.count;
-        summaryMap[e.company].totalPoints += e.point_per_ticket * e.count;
+        summaryMap[e.company].totalPoints += parseFloat((e.point_per_ticket * e.count).toFixed(1));
 
         // 全体合計
         totalCountAll += e.count;
-        totalPointsAll += e.point_per_ticket * e.count;
+        totalPointsAll += parseFloat((e.point_per_ticket * e.count).toFixed(1));
       });
       // テーブル描画
       summaryTableBody.innerHTML = '';
@@ -476,7 +543,8 @@ const inputCount = document.getElementById('input-count');
       });
       // 企業ごとに集計（点数ごとに分類）
       const grouped = {};
-      data.forEach(entry => {
+      // data.forEach(entry => {
+      filtered.forEach(entry => {
         const { company, point_per_ticket, count } = entry;
         if (!grouped[company]) grouped[company] = {};
         if (!grouped[company][point_per_ticket]) {
@@ -484,21 +552,21 @@ const inputCount = document.getElementById('input-count');
         }
         grouped[company][point_per_ticket] += count;
       });
-      Object.entries(grouped).forEach(([company, points]) => {
-        const totalCount = Object.values(points).reduce((a, b) => a + b, 0);
-        const totalPoint = Object.entries(points).reduce(
-          (sum, [pt, count]) => sum + pt * count, 0
-        );
+  //     Object.entries(grouped).forEach(([company, points]) => {
+  //       const totalCount = Object.values(points).reduce((a, b) => a + b, 0);
+  //       const totalPoint = Object.entries(points).reduce(
+  //         (sum, [pt, count]) => sum + pt * count, 0
+  //       );
 
-        const row = document.createElement('div');
-        row.innerHTML = `
-    <p class="font-semibold">${company}</p>
-    <p>合計枚数: ${totalCount}枚, 合計点数: ${totalPoint}点</p>
-    <button class="btn-detail" data-company="${company}">詳細</button>
-    <div class="details hidden" id="details-${company}"></div>
-  `;
-        document.getElementById('summary-area').appendChild(row);
-      });
+  //       const row = document.createElement('div');
+  //       row.innerHTML = `
+  //   <p class="font-semibold">${company}</p>
+  //   <p>合計枚数: ${totalCount}枚, 合計点数: ${totalPoint}点</p>
+  //   <button class="btn-detail" data-company="${company}">詳細</button>
+  //   <div class="details hidden" id="details-${company}"></div>
+  // `;
+  //       document.getElementById('summary-area').appendChild(row);
+  //     });
       document.querySelectorAll('.btn-detail').forEach(button => {
         button.addEventListener('click', () => {
           const company = button.dataset.company;
@@ -594,5 +662,4 @@ const inputCount = document.getElementById('input-count');
 
 </body>
 </html>
-
 
