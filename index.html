@@ -18,8 +18,6 @@
     padding-bottom: env(safe-area-inset-bottom, 0);
     }
   </style>
-  
-
   </head>
 <body class="bg-gray-100 text-gray-800">
 
@@ -87,60 +85,6 @@
               </select>
             </label>
           
-
-            <!-- <label for="input-company" class="block mb-1">
-              協賛企業
-              <input list="datalist-companies" id="input-company" class="w-full border rounded px-3 py-2" placeholder="--選択してください-">
-            </label>
-          
-            <!-- datalistの候補 -->
-            <!-- <datalist id="datalist-companies"> -->
-              <!-- <option value="--選択してください--"></option> -->
-
-              <!-- <option value="1: イオンリテール"></option>
-              <option value="3: ラッキーベル"></option>
-              <option value=" 4: ニッスイ"></option>
-              <option value=" 5: 日本ノート"></option>
-              <option value=" 6: DM三井製糖"></option>
-              <option value=" 7: キユーピー"></option>
-              <option value=" 9: エスビー食品"></option>
-              <option value=" 10: クレハ"></option>
-              <option value=" 11: リネットジャパンリサイクル"></option>
-              <option value=" 15: ジブラルタ生命保険"></option>
-              <option value=" 17: 日本テトラパック"></option>
-              <option value=" 18: 日清オイリオグループ"></option>
-              <option value=" 19: キヤノンマーケティングジャパン"></option>
-              <option value=" 21: スリーエム ジャパン"></option>
-              <option value=" 24: 日清製粉ウェルナ"></option>
-              <option value=" 25: 明治"></option>
-              <option value=" 26: 森永製菓"></option>
-              <option value=" 28: ブラザー販売"></option>
-              <option value=" 29: アサヒ飲料"></option>
-              <option value=" 31: 新学社"></option>
-              <option value=" 33: ヤマハミュージックジャパン"></option>
-              <option value=" 35: 日清食品"></option>
-              <option value=" 39: ファインプラス"></option>
-              <option value=" 43: 東芝ライフスタイル"></option>
-              <option value=" 48: ブルボン"></option>
-              <option value=" 52: ナカバヤシ"></option>
-              <option value=" 53: ショウワノート"></option>
-              <option value=" 54: キリンビバレッジ"></option>
-              <option value=" 55: クツワ"></option>
-              <option value=" 56: グリーンスタンプ"></option>
-              <option value=" 64: マルトモ"></option>
-              <option value=" 70: スミフルジャパン"></option>
-              <option value=" 73: エプソン販売"></option>
-              <option value=" 76: ＮＧＰ日本自動車リサイクル事業協同組合"></option>
-              <option value=" 77: 湖池屋"></option>
-              <option value=" 78: グンゼ"></option>
-              <option value=" 83: 味の素"></option>
-              <option value=" 84: セメダイン"></option>
-              <option value=" 88: ニチレイ"></option>
-              <option value=" 89: 白鶴酒造"></option>
-              <option value=" 91: トヤマ楽器製造"></option>
-              <option value=" 92: あいおいニッセイ同和損害保険"></option>
-              <option value=" 93: 石井食品"></option>
-            </datalist> --> 
 
           </div>
           <!-- 日付 -->
@@ -234,6 +178,8 @@
             </tbody>
           </table>
         </div>
+        <!-- 企業ごとに集計（点数ごとに分類） -->
+        <div id="summary" class="mt-4 overflow-x-auto"></div>
         
         <!-- （任意でCSV出力など） -->
         <div class="mt-4 text-center">
@@ -313,7 +259,7 @@
       history: document.getElementById('tab-history'),
       summary: document.getElementById('tab-summary'),
     };
-     // 集計要素
+    // 集計要素
     const filterStart = document.getElementById('filter-start');
     const filterEnd = document.getElementById('filter-end');
     const btnApplyFilter = document.getElementById('btn-apply-filter');
@@ -322,7 +268,7 @@
     const summaryTotalBody = document.getElementById('summary-total-body');
     const btnExportCsv = document.getElementById('btn-export-csv');
 
-      // 画面切替
+    // 画面切替
     async function showScreen(name) {
       for (const key in screens) {
         screens[key].classList.toggle('hidden', key !== name);
@@ -340,30 +286,30 @@
     for (const [name, btn] of Object.entries(tabs)) {
       btn.addEventListener('click', () => showScreen(name));
     }
-     // データ取得関数
-      async function loadEntries() {
-        const { data, error } = await supabase
-          .from('bellmark')
-          .select('*')
-          .order('date', { ascending: false });
+    // データ取得関数
+    async function loadEntries() {
+      const { data, error } = await supabase
+        .from('bellmark')
+        .select('*')
+        .order('date', { ascending: false });
 
-        if (error) {
-          console.error('読み込みエラー:', error);
-          return [];
-        }
-
-        return data;
+      if (error) {
+        console.error('読み込みエラー:', error);
+        return [];
       }
 
-      // 入力フォームの要素
-const inputCompany = document.getElementById('input-company');
-const inputDate = document.getElementById('input-date');
-const inputPoint = document.getElementById('input-point');
-const inputCount = document.getElementById('input-count');
+      return data;
+    }
+
+    // 入力フォームの要素
+    const inputCompany = document.getElementById('input-company');
+    const inputDate = document.getElementById('input-date');
+    const inputPoint = document.getElementById('input-point');
+    const inputCount = document.getElementById('input-count');
 
 
     // データ取得（例：履歴表示）
-    async function renderHistory(){
+    async function renderHistory() {
       const { data, error } = await supabase
         .from('bellmark')
         .select('*')
@@ -375,11 +321,11 @@ const inputCount = document.getElementById('input-count');
         return;
       }
 
-    
-     
 
-   const entries = data; 
-       // 新しい順に並べる（date降順＋時間順が同じならIDで）
+
+
+      const entries = data;
+      // 新しい順に並べる（date降順＋時間順が同じならIDで）
       entries.sort((a, b) => {
         if (a.date !== b.date) return b.date.localeCompare(a.date);
         return b.id.localeCompare(a.id);
@@ -395,9 +341,9 @@ const inputCount = document.getElementById('input-count');
         // 左部：情報表示
         const infoDiv = document.createElement('div');
         infoDiv.innerHTML = `
-          <p class="font-medium">${entry.company} - ${entry.date}</p>
-          <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${parseFloat((entry.point_per_ticket * entry.count).toFixed(1))}</p>
-        `;
+            <p class="font-medium">${entry.company} - ${entry.date}</p>
+            <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${parseFloat((entry.point_per_ticket * entry.count).toFixed(1))}</p>
+          `;
         // 右部：編集・削除
         const btnDiv = document.createElement('div');
         btnDiv.className = 'flex space-x-2';
@@ -415,34 +361,34 @@ const inputCount = document.getElementById('input-count');
           inputCount.value = entry.count;
           // 古いエントリは一旦削除
           const { error: deleteError } = await supabase
-          .from('bellmark')
+            .from('bellmark')
             .delete()
             .eq('id', entry.id);
-      if (deleteError) {
-        alert('削除に失敗しました');
-        console.error(deleteError);
-      } else {
-        renderHistory();
-      }
+          if (deleteError) {
+            alert('削除に失敗しました');
+            console.error(deleteError);
+          } else {
+            renderHistory();
+          }
         });
         // 削除ボタン
         const btnDel = document.createElement('button');
         btnDel.textContent = '削除';
         btnDel.className = 'text-sm text-red-500 hover:underline';
         btnDel.addEventListener('click', async () => {
-      if (confirm('本当に削除しますか？')) {
-        const { error: deleteError } = await supabase
-          .from('bellmark')
-          .delete()
-          .eq('id', entry.id);
+          if (confirm('本当に削除しますか？')) {
+            const { error: deleteError } = await supabase
+              .from('bellmark')
+              .delete()
+              .eq('id', entry.id);
 
-        if (deleteError) {
-          alert('削除に失敗しました');
-          console.error(deleteError);
-        } else {
-          renderHistory();
-        }
-      }
+            if (deleteError) {
+              alert('削除に失敗しました');
+              console.error(deleteError);
+            } else {
+              renderHistory();
+            }
+          }
         });
         btnDiv.appendChild(btnEdit);
         btnDiv.appendChild(btnDel);
@@ -463,7 +409,7 @@ const inputCount = document.getElementById('input-count');
       const inputDate = document.getElementById('input-date').value;
       const point = parseFloat(document.getElementById('input-point').value);
       const count = parseInt(document.getElementById('input-count').value);
-      
+
 
       if (!company || !date || isNaN(point) || isNaN(count)) {
         alert('すべて正しく入力してください');
@@ -488,19 +434,19 @@ const inputCount = document.getElementById('input-count');
     });
     // 履歴表示
     async function renderSummary() {
-  // 日付フィルター取得
-  const startDate = filterStart.value;
-  const endDate = filterEnd.value;
+      // 日付フィルター取得
+      const startDate = filterStart.value;
+      const endDate = filterEnd.value;
 
-  // 絞り込み
-  const entries = await loadEntries();
-  const filtered = entries.filter(e => {
-    if (startDate && e.date < startDate) return false;
-    if (endDate && e.date > endDate) return false;
-    return true;
-  });
+      // 絞り込み
+      const entries = await loadEntries();
+      const filtered = entries.filter(e => {
+        if (startDate && e.date < startDate) return false;
+        if (endDate && e.date > endDate) return false;
+        return true;
+      });
 
-  renderHistory(filtered); // ここで表示処理へ
+      renderHistory(filtered); // ここで表示処理へ
 
       // 企業ごと集計
       const summaryMap = {};
@@ -523,10 +469,10 @@ const inputCount = document.getElementById('input-count');
       summaryTableBody.innerHTML = '';
       // const companies = Object.keys(summaryMap).sort();
       const companies = Object.keys(summaryMap).sort((a, b) => {
-      const numA = parseInt(a.split(':')[0]);
-      const numB = parseInt(b.split(':')[0]);
-      return numA - numB;
-    });
+        const numA = parseInt(a.split(':')[0]);
+        const numB = parseInt(b.split(':')[0]);
+        return numA - numB;
+      });
       if (companies.length === 0) {
         summaryTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">該当データがありません</td></tr>';
         return;
@@ -535,77 +481,116 @@ const inputCount = document.getElementById('input-count');
         const { totalCount, totalPoints } = summaryMap[company];
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td class="border px-4 py-2">${company}</td>
-          <td class="border px-4 py-2 text-right">${totalCount}</td>
-          <td class="border px-4 py-2 text-right">${totalPoints}</td>
-        `;
+            <td class="border px-4 py-2">${company}</td>
+            <td class="border px-4 py-2 text-right">${totalCount}</td>
+            <td class="border px-4 py-2 text-right">${totalPoints}</td>
+          `;
         summaryTableBody.appendChild(tr);
       });
+
       // 企業ごとに集計（点数ごとに分類）
-      const grouped = {};
-      // data.forEach(entry => {
-      filtered.forEach(entry => {
-        const { company, point_per_ticket, count } = entry;
-        if (!grouped[company]) grouped[company] = {};
-        if (!grouped[company][point_per_ticket]) {
-          grouped[company][point_per_ticket] = 0;
-        }
-        grouped[company][point_per_ticket] += count;
-      });
-  //     Object.entries(grouped).forEach(([company, points]) => {
-  //       const totalCount = Object.values(points).reduce((a, b) => a + b, 0);
-  //       const totalPoint = Object.entries(points).reduce(
-  //         (sum, [pt, count]) => sum + pt * count, 0
-  //       );
+      const { data: fetchedEntries, error } = await supabase
+    .from('entries')
+    .select('*');
 
-  //       const row = document.createElement('div');
-  //       row.innerHTML = `
-  //   <p class="font-semibold">${company}</p>
-  //   <p>合計枚数: ${totalCount}枚, 合計点数: ${totalPoint}点</p>
-  //   <button class="btn-detail" data-company="${company}">詳細</button>
-  //   <div class="details hidden" id="details-${company}"></div>
-  // `;
-  //       document.getElementById('summary-area').appendChild(row);
-  //     });
-      document.querySelectorAll('.btn-detail').forEach(button => {
-        button.addEventListener('click', () => {
-          const company = button.dataset.company;
-          const detailDiv = document.getElementById(`details-${company}`);
-          const pointData = grouped[company];
+  if (error) {
+    console.error('データ取得エラー:', error);
+    return;
+  }
+        // const summaryMap = {};
 
-          let html = '<ul>';
-          Object.entries(pointData).forEach(([pt, count]) => {
-            html += `<li>${pt}点 × ${count}枚 = ${pt * count}点</li>`;
-          });
-          html += '</ul>';
-
-          detailDiv.innerHTML = html;
-          detailDiv.classList.toggle('hidden');
-        });
-      });
-      // 合計行の描画
-      const summaryTotalBody = document.getElementById('summary-total-body');
-      summaryTotalBody.innerHTML = `
-      <td class="border px-4 py-2"></td>
-      <td class="border px-4 py-2 text-right">${totalCountAll} 枚</td>
-      <td class="border px-4 py-2 text-right">${totalPointsAll.toFixed(1)} 点</td>
-      `;
+  fetchedEntries.forEach(entry => {
+    const { company, point, count } = entry;
+    if (!summaryMap[company]) {
+      summaryMap[company] = {
+        details: {},
+        totalCount: 0,
+        totalPoints: 0
+      };
     }
+
+    const detailKey = point; // 数値のまま保持（並び替えしやすくするため）
+
+    if (!summaryMap[company].details[detailKey]) {
+      summaryMap[company].details[detailKey] = 0;
+    }
+
+    summaryMap[company].details[detailKey] += count;
+    summaryMap[company].totalCount += count;
+    summaryMap[company].totalPoints += point * count;
+  });
+
+  const container = document.getElementById('summary');
+  container.innerHTML = '';
+
+  for (const company in summaryMap) {
+    const companyData = summaryMap[company];
     
-    // フィルター適用・クリア
-    btnApplyFilter.addEventListener('click', () => {
-      renderSummary();
+    const div = document.createElement('div');
+    div.className = 'company-summary';
+
+    const h3 = document.createElement('h3');
+    h3.textContent = company;
+    div.appendChild(h3);
+
+    // 点数ごとの詳細（並び替え：昇順）
+    const sortedPoints = Object.keys(companyData.details).sort((a, b) => a - b);
+    sortedPoints.forEach(point => {
+      const count = companyData.details[point];
+      const subtotal = point * count;
+
+      const p = document.createElement('p');
+      p.textContent = `${point}点 × ${count}枚 → 小計 ${subtotal.toFixed(1)}点`;
+      div.appendChild(p);
     });
-    btnClearFilter.addEventListener('click', () => {
-      filterStart.value = '';
-      filterEnd.value = '';
-      renderSummary();
-    });
+
+    const total = document.createElement('p');
+    total.innerHTML = `合計枚数：${companyData.totalCount}枚、合計点数：${companyData.totalPoints.toFixed(1)}点`;
+    div.appendChild(total);
+
+    container.appendChild(div);
+  }
+
+      // CSV出力ボタン（全体 or 企業ごと）
+      // function exportToCSV(groupedData) {
+      //   let csv = '企業名,点数,枚数,小計\n';
+
+      //   Object.entries(groupedData).forEach(([company, pointData]) => {
+      //     Object.entries(pointData).forEach(([pt, count]) => {
+      //       csv += `${company},${pt},${count},${pt * count}\n`;
+      //     });
+      //   });
+
+      //   const blob = new Blob([csv], { type: 'text/csv' });
+      //   const url = URL.createObjectURL(blob);
+      //   const a = document.createElement('a');
+      //   a.href = url;
+      //   a.download = 'bellmark_summary.csv';
+      //   a.click();
+      // }
+      // 合計行の描画
+      // const summaryTotalBody = document.getElementById('summary-total-body');
+      summaryTotalBody.innerHTML = `
+        <td class="border px-4 py-2"></td>
+        <td class="border px-4 py-2 text-right">${totalCountAll} 枚</td>
+        <td class="border px-4 py-2 text-right">${parseFloat(totalPointsAll.toFixed(1))} 点</td>`;
+         }
+      // フィルター適用・クリア
+      btnApplyFilter.addEventListener('click', () => {
+        renderSummary();
+      });
+      btnClearFilter.addEventListener('click', () => {
+        filterStart.value = '';
+        filterEnd.value = '';
+        renderSummary();
+      });
 
 
-    document.addEventListener('DOMContentLoaded', renderHistory);
+      document.addEventListener('DOMContentLoaded', renderHistory);
 
-     // CSVダウンロード
+      
+
+      // CSVダウンロード
       btnExportCsv?.addEventListener('click', async () => {
         const entries = await loadEntries(); // ← 正しいデータ取得
 
@@ -643,23 +628,20 @@ const inputCount = document.getElementById('input-count');
         link.click();
         document.body.removeChild(link);
       }
-    // 初期化
-    //  const inputDate = document.getElementById('input-date');
-    const date = inputDate.value;
+      // 初期化
+      //  const inputDate = document.getElementById('input-date');
+      const date = inputDate.value;
 
-    async function init() {
-      // 日付初期値に今日をセット（入力画面）
-      const today = new Date().toISOString().split('T')[0];
-      inputDate.value = today;
-      // datalist更新
-      // updateCompanyDatalist();
-      // デフォルト画面
-      showScreen('input');
-    }
-    init();
-
-</script>
-
+      async function init() {
+        // 日付初期値に今日をセット（入力画面）
+        const today = new Date().toISOString().split('T')[0];
+        inputDate.value = today;
+        // datalist更新
+        // updateCompanyDatalist();
+        // デフォルト画面
+        showScreen('input');
+      }
+      init();
+  </script>
 </body>
 </html>
-
