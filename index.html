@@ -153,8 +153,8 @@
             <thead>
               <tr class="bg-gray-200">
                 <th class="px-4 py-2 text-left">企業名</th>
-                <th class="px-4 py-2 text-right">合計枚数</th>
-                <th class="px-4 py-2 text-right">合計点数</th>
+                <th class="px-4 py-2 text-right">枚数</th>
+                <th class="px-4 py-2 text-right">点数</th>
               </tr>
             </thead>
             <tbody id="summary-table-body">
@@ -179,7 +179,15 @@
           </table>
         </div>
         <!-- 企業ごとに集計（点数ごとに分類） -->
-        <div id="summary" class="mt-4 overflow-x-auto"></div>
+         <div class="mt-4 bg-white">
+           <details class="text-center">
+          <summary class="text-l font-semibold px-4 py-2 rounded">企業ごとの詳細</summary>
+          <div id="summary" class="space-y-4">
+            <!-- JavaScriptで企業ごとの集計結果を挿入 -->
+          </div>
+          </details>
+         </div>
+      
         
         <!-- （任意でCSV出力など） -->
         <div class="mt-4 text-center">
@@ -490,7 +498,7 @@
 
       // 企業ごとに集計（点数ごとに分類）
       const { data: fetchedEntries, error } = await supabase
-    .from('entries')
+    .from('bellmark')
     .select('*');
 
   if (error) {
@@ -500,7 +508,7 @@
         // const summaryMap = {};
 
   fetchedEntries.forEach(entry => {
-    const { company, point, count } = entry;
+    const { company, point_per_ticket, count } = entry;
     if (!summaryMap[company]) {
       summaryMap[company] = {
         details: {},
@@ -509,15 +517,19 @@
       };
     }
 
-    const detailKey = point; // 数値のまま保持（並び替えしやすくするため）
+    const detailKey = String(point_per_ticket);// 数値のまま保持（並び替えしやすくするため）
+
+    if (!summaryMap[company].details) {
+      summaryMap[company].details = {};
+    }
 
     if (!summaryMap[company].details[detailKey]) {
       summaryMap[company].details[detailKey] = 0;
     }
 
     summaryMap[company].details[detailKey] += count;
-    summaryMap[company].totalCount += count;
-    summaryMap[company].totalPoints += point * count;
+    // summaryMap[company].totalCount += count;
+    // summaryMap[company].totalPoints += point_per_ticket * count;
   });
 
   const container = document.getElementById('summary');
@@ -526,12 +538,13 @@
   for (const company in summaryMap) {
     const companyData = summaryMap[company];
     
-    const div = document.createElement('div');
-    div.className = 'company-summary';
+    const companySummaryTable = document.createElement('table');
+    companySummaryTable.className = 'company-summary min-w-full bg-white rounded-lg shadow mt-4';
 
-    const h3 = document.createElement('h3');
-    h3.textContent = company;
-    div.appendChild(h3);
+    const companySummaryCampany = document.createElement('tr');
+    companySummaryCampany.className = 'bg-gray-200';
+    companySummaryCampany.innerHTML = `<th class="px-4 py-2" colspan="3">${company}</th>`;
+    companySummaryTable.appendChild(companySummaryCampany);
 
     // 点数ごとの詳細（並び替え：昇順）
     const sortedPoints = Object.keys(companyData.details).sort((a, b) => a - b);
@@ -539,16 +552,16 @@
       const count = companyData.details[point];
       const subtotal = point * count;
 
-      const p = document.createElement('p');
-      p.textContent = `${point}点 × ${count}枚 → 小計 ${subtotal.toFixed(1)}点`;
-      div.appendChild(p);
+      const companySummaryDetail = document.createElement('tr');
+      companySummaryDetail.innerHTML  = `<td class="border px-4 py-2 text-right">${point}点 </td><td class="border px-4 py-2 text-right"> ${count}枚 </td><td class="border px-4 py-2 text-right">  ${subtotal.toFixed(1)}点</td>`;
+      companySummaryTable.appendChild(companySummaryDetail);
     });
 
-    const total = document.createElement('p');
-    total.innerHTML = `合計枚数：${companyData.totalCount}枚、合計点数：${companyData.totalPoints.toFixed(1)}点`;
-    div.appendChild(total);
+    const companySummaryTotal = document.createElement('tr');
+    companySummaryTotal.innerHTML = `<th class="border px-4 py-2">企業合計</th><td class="border px-4 py-2 text-right">${companyData.totalCount}枚</td><td class="border px-4 py-2 text-right">${companyData.totalPoints.toFixed(1)}点</td>`;
+    companySummaryTable.appendChild(companySummaryTotal);
 
-    container.appendChild(div);
+    container.appendChild(companySummaryTable);
   }
 
       // CSV出力ボタン（全体 or 企業ごと）
