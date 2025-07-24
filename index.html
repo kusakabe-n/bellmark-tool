@@ -329,9 +329,6 @@
         return;
       }
 
-
-
-
       const entries = data;
       // 新しい順に並べる（date降順＋時間順が同じならIDで）
       entries.sort((a, b) => {
@@ -412,6 +409,62 @@
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      // 登録済みかチェック
+      function isUserRegistered() {
+        return localStorage.getItem(REGISTERED_USER_KEY);
+        // const name = localStorage.getItem('userName');
+        // const id = localStorage.getItem('userId');
+        return;
+      }
+
+       // 登録・制限機能を追加
+      const REGISTERED_USER_KEY = 'bellmark_username';
+      const ALLOWED_PASSWORD = 'horibell';
+
+      const modal = document.getElementById('user-modal');
+      const modalUsername = document.getElementById('modal-username');
+      const modalPassword = document.getElementById('modal-password');
+      const modalCancel = document.getElementById('modal-cancel');
+      const modalSubmit = document.getElementById('modal-submit');
+
+      // モーダル表示・非表示
+      function showModal() {
+        modal.classList.remove('hidden');
+      }
+      function hideModal() {
+        modal.classList.add('hidden');
+        modalUsername.value = '';
+        modalPassword.value = '';
+      }
+
+      // 登録処理
+      modalSubmit.addEventListener('click', () => {
+        const name = modalUsername.value.trim();
+        const password = modalPassword.value.trim();
+
+        if (!name || password !== ALLOWED_PASSWORD) {
+          alert('ユーザー名を正しく入力し、正しいパスワードを入力してください');
+          return;
+        }
+
+        localStorage.setItem(REGISTERED_USER_KEY, name);
+        alert(`登録完了：ようこそ、${name} さん！`);
+        hideModal();
+      });
+
+      modalCancel.addEventListener('click', hideModal);
+
+      // 「保存」ボタン制限
+      // form.addEventListener('submit', async (e) => {
+      //   e.preventDefault();
+
+        const user = isUserRegistered();
+        if (!user) {
+          alert('登録済みのユーザーのみ操作できます。');
+          showModal();
+          return;
+        }
+
       const company = document.getElementById('input-company').value.trim();
       const date = document.getElementById('input-date').value;
       const inputDate = document.getElementById('input-date').value;
@@ -428,7 +481,8 @@
         company,
         date,
         point_per_ticket: point,
-        count
+        count,
+        user: user  // 任意で登録ユーザー名も記録可能
       }]);
 
       if (error) {
@@ -481,6 +535,7 @@
         const numB = parseInt(b.split(':')[0]);
         return numA - numB;
       });
+
       if (companies.length === 0) {
         summaryTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">該当データがありません</td></tr>';
         return;
@@ -563,26 +618,7 @@
 
     container.appendChild(companySummaryTable);
   }
-
-      // CSV出力ボタン（全体 or 企業ごと）
-      // function exportToCSV(groupedData) {
-      //   let csv = '企業名,点数,枚数,小計\n';
-
-      //   Object.entries(groupedData).forEach(([company, pointData]) => {
-      //     Object.entries(pointData).forEach(([pt, count]) => {
-      //       csv += `${company},${pt},${count},${pt * count}\n`;
-      //     });
-      //   });
-
-      //   const blob = new Blob([csv], { type: 'text/csv' });
-      //   const url = URL.createObjectURL(blob);
-      //   const a = document.createElement('a');
-      //   a.href = url;
-      //   a.download = 'bellmark_summary.csv';
-      //   a.click();
-      // }
-      // 合計行の描画
-      // const summaryTotalBody = document.getElementById('summary-total-body');
+      // 合計行の表示
       summaryTotalBody.innerHTML = `
         <td class="border px-4 py-2"></td>
         <td class="border px-4 py-2 text-right">${totalCountAll} 枚</td>
@@ -656,5 +692,23 @@
       }
       init();
   </script>
+  <!-- ユーザー登録モーダル -->
+<div id="user-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+  <div class="bg-white p-6 rounded shadow w-80 space-y-4">
+    <h3 class="text-lg font-semibold">ユーザー登録</h3>
+    <div>
+      <label class="block text-sm mb-1">ユーザー名</label>
+      <input type="text" id="modal-username" class="w-full border px-3 py-2 rounded" placeholder="例：佐藤" />
+    </div>
+    <div>
+      <label class="block text-sm mb-1">共通パスワード</label>
+      <input type="password" id="modal-password" class="w-full border px-3 py-2 rounded" placeholder="パスワード" />
+    </div>
+    <div class="flex justify-end space-x-2">
+      <button id="modal-cancel" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">キャンセル</button>
+      <button id="modal-submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">登録</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
