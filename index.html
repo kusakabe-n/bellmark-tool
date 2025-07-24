@@ -411,7 +411,8 @@
       entries.forEach(entry => {
         const card = document.createElement('div');
         card.className = 'bg-white p-3 rounded-lg shadow flex justify-between items-center';
-         const currentUserName = localStorage.getItem('bellmark_username'); // ユーザー名を取得
+        const currentUserName = localStorage.getItem('bellmark_username'); // 現在のユーザー名
+        const masterUserName = 'master'; // ← 必要に応じて "admin" などに変更可
          // 自分の登録データなら背景色を変更
         if (entry.user === currentUserName) {
           card.style.backgroundColor = '#fff9c4'; // 薄い黄色
@@ -422,7 +423,10 @@
             <p class="font-medium">${entry.company} - ${entry.date}</p>
             <p>点数: ${entry.point_per_ticket}点, 枚数: ${entry.count}枚, 合計: ${parseFloat((entry.point_per_ticket * entry.count).toFixed(1))}</p>
           `;
-        // 右部：編集・削除
+
+          card.appendChild(infoDiv);
+         // 右部：編集・削除（自分または master のみ表示）
+        if (entry.user === currentUserName || currentUserName === masterUserName) {
         const btnDiv = document.createElement('div');
         btnDiv.className = 'flex space-x-2';
         // 編集ボタン
@@ -470,8 +474,8 @@
         });
         btnDiv.appendChild(btnEdit);
         btnDiv.appendChild(btnDel);
-        card.appendChild(infoDiv);
         card.appendChild(btnDiv);
+      }
         historyList.appendChild(card);
       });
       return data;
