@@ -330,19 +330,29 @@
       }
 
       const entries = data;
-      // 新しい順に並べる（date降順＋時間順が同じならIDで）
+
+      // 日付＋時間の降順で並べ替え
       entries.sort((a, b) => {
-        if (a.date !== b.date) return b.date.localeCompare(a.date);
-        return b.id.localeCompare(a.id);
+        const aDateTime = `${a.date} ${a.time}`;
+        const bDateTime = `${b.date} ${b.time}`;
+        return bDateTime.localeCompare(aDateTime);
       });
+
       historyList.innerHTML = '';
       if (entries.length === 0) {
         historyList.innerHTML = '<p class="text-center text-gray-500">データがありません</p>';
         return;
       }
+
+      
       entries.forEach(entry => {
         const card = document.createElement('div');
         card.className = 'bg-white p-3 rounded-lg shadow flex justify-between items-center';
+         const currentUserName = localStorage.getItem('bellmark_username'); // ユーザー名を取得
+         // 自分の登録データなら背景色を変更
+        if (entry.user === currentUserName) {
+          card.style.backgroundColor = '#fff9c4'; // 薄い黄色
+        }
         // 左部：情報表示
         const infoDiv = document.createElement('div');
         infoDiv.innerHTML = `
@@ -587,11 +597,21 @@
     // summaryMap[company].totalPoints += point_per_ticket * count;
   });
 
-  const container = document.getElementById('summary');
-  container.innerHTML = '';
+  // 企業名（頭2桁の数字）でソート
+      const sortedCompanies = Object.keys(summaryMap).sort((a, b) => {
+        const numA = parseInt(a.slice(0, 2), 10);
+        const numB = parseInt(b.slice(0, 2), 10);
+        return numA - numB;
+      });
 
-  for (const company in summaryMap) {
-    const companyData = summaryMap[company];
+  
+
+  const container = document.getElementById('summary');
+      container.innerHTML = '';
+
+      for (const company of sortedCompanies) {
+      const companyData = summaryMap[company];
+
     
     const companySummaryTable = document.createElement('table');
     companySummaryTable.className = 'company-summary min-w-full bg-white rounded-lg shadow mt-4';
@@ -634,11 +654,8 @@
         renderSummary();
       });
 
-
       document.addEventListener('DOMContentLoaded', renderHistory);
-
       
-
       // CSVダウンロード
       btnExportCsv?.addEventListener('click', async () => {
         const entries = await loadEntries(); // ← 正しいデータ取得
@@ -660,7 +677,7 @@
         let csv = '企業名,日付,点数/枚,枚数,合計点数\n';
         filtered.forEach(e => {
           const total = e.point_per_ticket * e.count;
-          csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total}\n`;
+          csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total},${e.user},\n`;
         });
 
         downloadCSV(csv, 'bellmark_data.csv');
