@@ -744,7 +744,7 @@
 
         let csv = '企業名,日付,点数/枚,枚数,合計点数\n';
         filtered.forEach(e => {
-          const total = e.point_per_ticket * e.count;
+          const total = parseFloat((e.point_per_ticket * e.count).toFixed(1));
           csv += `"${e.company}","${e.date}",${e.point_per_ticket},${e.count},${total},${e.user},\n`;
         });
 
