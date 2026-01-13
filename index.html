@@ -9,6 +9,14 @@
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+        body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* グレーアウト */
+  z-index: 9999;
+  pointer-events: none; /* 操作はブロックしない場合 */
+}
     .footer-fixed{
     position: fixed;
     bottom: env(safe-area-inset-bottom, 0);
@@ -82,14 +90,7 @@
     
       }
     }
-    body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5); /* グレーアウト */
-  z-index: 9999;
-  pointer-events: none; /* 操作はブロックしない場合 */
-}
+
   </style>
 
   </head>
