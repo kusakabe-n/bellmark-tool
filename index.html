@@ -82,6 +82,14 @@
     
       }
     }
+    body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5); /* グレーアウト */
+  z-index: 9999;
+  pointer-events: none; /* 操作はブロックしない場合 */
+}
   </style>
 
   </head>
